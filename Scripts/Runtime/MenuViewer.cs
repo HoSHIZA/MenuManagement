@@ -48,11 +48,6 @@ namespace ShizoGames.MenuManagement
         /// Returns true if the menu history stack is not empty, false otherwise.
         /// </summary>
         public bool HistoryIsNotEmpty => MenuHistory.Count > 0;
-        
-        // ! TEST
-        public Dictionary<Type, T> MenuInstances => _menuInstances;
-        public Stack<T> MenuHistory => _menuHistory;
-        // ! TEST
 
         private void Awake()
         {
