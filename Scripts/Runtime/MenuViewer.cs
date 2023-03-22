@@ -42,12 +42,12 @@ namespace ShizoGames.MenuManagement
         /// <summary>
         /// Returns true if the menu history stack is empty, false otherwise.
         /// </summary>
-        public bool HistoryIsEmpty => MenuHistory.Count == 0;
+        public bool HistoryIsEmpty => _menuHistory.Count == 0;
         
         /// <summary>
         /// Returns true if the menu history stack is not empty, false otherwise.
         /// </summary>
-        public bool HistoryIsNotEmpty => MenuHistory.Count > 0;
+        public bool HistoryIsNotEmpty => _menuHistory.Count > 0;
 
         private void Awake()
         {
@@ -109,7 +109,7 @@ namespace ShizoGames.MenuManagement
                 {
                     if (remember)
                     {
-                        MenuHistory.Push(_currentMenu);
+                        _menuHistory.Push(_currentMenu);
                     }
 
                     if (closeLastMenu)
@@ -136,7 +136,7 @@ namespace ShizoGames.MenuManagement
         {
             if (HistoryIsNotEmpty)
             {
-                OpenMenu(MenuHistory.Pop(), false);
+                OpenMenu(_menuHistory.Pop(), false);
             }
             else
             {
@@ -177,7 +177,7 @@ namespace ShizoGames.MenuManagement
         /// <param name="destroy">If true, destroys the closed menu.</param>
         public void CloseMenu(Type type, bool clearHistory = false, bool destroy = false)
         {
-            if (!MenuInstances.TryGetValue(type, out var menu)) return;
+            if (!_menuInstances.TryGetValue(type, out var menu)) return;
             
             menu.Close();
             
@@ -185,7 +185,7 @@ namespace ShizoGames.MenuManagement
             {
                 Destroy(menu.gameObject);
                 
-                MenuInstances.Remove(menu.GetType());
+                _menuInstances.Remove(menu.GetType());
             }
             
             if (clearHistory)
@@ -214,13 +214,13 @@ namespace ShizoGames.MenuManagement
         /// <param name="destroy">If true, destroys the closed menus.</param>
         public void CloseAllMenus(bool destroy = false)
         {
-            var menus = MenuInstances.Keys.ToArray();
+            var menus = _menuInstances.Keys.ToArray();
             foreach (var menu in menus)
             {
                 CloseMenu(menu, destroy);
             }
             
-            MenuHistory.Clear();
+            _menuHistory.Clear();
         }
         
         /// <summary>
@@ -239,12 +239,12 @@ namespace ShizoGames.MenuManagement
         /// <returns>True if the menu is open, false otherwise.</returns>
         public bool IsMenuOpen<TMenu>() where TMenu : T
         {
-            return MenuInstances.TryGetValue(typeof(TMenu), out var menu) && menu.IsOpen;
+            return _menuInstances.TryGetValue(typeof(TMenu), out var menu) && menu.IsOpen;
         }
         
         private void ShowOrInstantiate(Menu menu)
         {
-            if (MenuInstances.TryGetValue(menu.GetType(), out var m))
+            if (_menuInstances.TryGetValue(menu.GetType(), out var m))
             {
                 _currentMenu = m;
             }
@@ -253,7 +253,7 @@ namespace ShizoGames.MenuManagement
                 var menuObj = Instantiate(menu, _menuCanvas.transform, false);
                 menuObj.SetMenuViewer(this);
                 
-                MenuInstances.Add(menu.GetType(), (T)menuObj);
+                _menuInstances.Add(menu.GetType(), (T)menuObj);
                 
                 _currentMenu = (T)menuObj;
             }
