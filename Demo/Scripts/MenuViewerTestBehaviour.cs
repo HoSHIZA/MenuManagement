@@ -29,12 +29,6 @@ namespace ShizoGames.MenuManagement.Demo
             {
                 _menuViewer.CloseCurrentMenu();
             }
-            
-            if (Input.GetKeyDown(KeyCode.C))
-            {
-                Debug.LogWarning("Menu History: " + _menuViewer.MenuHistory.Count);
-                Debug.LogWarning("Menu Instances: " + _menuViewer.MenuInstances.Keys.Count);
-            }
         }
     }
 }
